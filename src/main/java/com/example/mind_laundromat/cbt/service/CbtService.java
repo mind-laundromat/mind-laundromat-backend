@@ -84,4 +84,14 @@ public class CbtService {
 
         return response;
     }
+
+    public void deleteCbt(Long diary_id) {
+
+        // 1. Diary 정보 가져오기
+        Diary diary = diaryRepository.findById(diary_id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록입니다."));
+
+        // 2. 삭제
+        diaryRepository.delete(diary);
+    }
 }

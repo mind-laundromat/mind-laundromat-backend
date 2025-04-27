@@ -20,9 +20,14 @@ public class CbtController {
         cbtService.createCbt(createCbtRequest);
     }
 
-    @GetMapping("/user_id")
-    public SelectCbtResponse selectCbt(@RequestParam("user_id") Long user_id) {
-        return cbtService.selectCbt(user_id);
+    @GetMapping("/{diary_id}")
+    public SelectCbtResponse selectCbt(@PathVariable("diary_id") Long diary_id) {
+        return cbtService.selectCbt(diary_id);
+    }
+
+    @DeleteMapping("/{diary_id}")
+    public void deleteCbt(@PathVariable("diary_id") Long diary_id) {
+        cbtService.deleteCbt(diary_id);
     }
 
 }

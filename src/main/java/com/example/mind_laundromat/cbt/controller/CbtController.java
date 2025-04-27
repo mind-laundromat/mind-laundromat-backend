@@ -1,15 +1,29 @@
 package com.example.mind_laundromat.cbt.controller;
 
+import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
+import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
+import com.example.mind_laundromat.cbt.service.CbtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/cbt")
 @Log4j2
 @RequiredArgsConstructor // 자동 주입을 위한 애노테이션
 public class CbtController {
+
+    private final CbtService cbtService;
+
+    @PostMapping()
+    public void createCbt(@RequestBody CreateCbtRequest createCbtRequest) {
+        cbtService.createCbt(createCbtRequest);
+    }
+
+    @GetMapping("/user_id")
+    public SelectCbtResponse selectCbt(@RequestParam("user_id") Long user_id) {
+        return cbtService.selectCbt(user_id);
+    }
 
 }
 

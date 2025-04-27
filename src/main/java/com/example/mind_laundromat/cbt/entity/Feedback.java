@@ -15,7 +15,7 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedback_id;
 
-    private String reframe_content;
+    private String recommend_content;
 
     private String content;
 }

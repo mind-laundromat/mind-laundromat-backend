@@ -31,8 +31,6 @@ public class CreateCbtRequest {
     /**
      * Feedback
      * */
-    private String recommend_content;
-
-    private String content;
+    private String summation;
 
 }

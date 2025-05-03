@@ -1,6 +1,7 @@
 package com.example.mind_laundromat.user.service;
 
 import com.example.mind_laundromat.user.dto.UserDTO;
+import com.example.mind_laundromat.user.entity.Role;
 import com.example.mind_laundromat.user.entity.User;
 import com.example.mind_laundromat.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +30,13 @@ public class UserService {
                 .name(userDTO.getName())
                 .password(encodedPassword)
                 .gender(userDTO.getGender())
+                .role(Role.valueOf("MEMBER"))
                 .build();
 
         userRepository.save(user);
     }
 
     // 로그인
+
 
 }

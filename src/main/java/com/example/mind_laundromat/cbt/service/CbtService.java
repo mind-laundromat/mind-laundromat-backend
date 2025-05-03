@@ -44,14 +44,12 @@ public class CbtService {
         // 3. Emotion 저장
         Emotion emotion = Emotion.builder()
                 .emotion_type(createCbtRequest.getEmotion_type())
-                .level(createCbtRequest.getLevel())
                 .build();
         Emotion saveEmotion = emotionRepository.save(emotion);
 
         // 4. Feedback 저장
         Feedback feedback = Feedback.builder()
-                .recommend_content(createCbtRequest.getRecommend_content())
-                .content(createCbtRequest.getContent())
+                .summation(createCbtRequest.getSummation())
                 .build();
         Feedback saveFeedback = feedbackRepository.save(feedback);
 
@@ -77,9 +75,7 @@ public class CbtService {
                 .regDate(diary.getRegDate())
                 .modDate(diary.getModDate())
                 .emotion_type(diary.getEmotion().getEmotion_type())
-                .level(diary.getEmotion().getLevel())
-                .recommend_content(diary.getFeedback().getRecommend_content())
-                .content(diary.getFeedback().getContent())
+                .summation(diary.getFeedback().getSummation())
                 .build();
 
         return response;

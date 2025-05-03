@@ -31,12 +31,9 @@ public class SelectCbtResponse {
      * */
     private EmotionType emotion_type; // 감정 종류
 
-    private int level; // [1 ~ 10]
 
     /**
      * Feedback
      * */
-    private String recommend_content;
-
-    private String content;
+    private String summation; // 요약
 }

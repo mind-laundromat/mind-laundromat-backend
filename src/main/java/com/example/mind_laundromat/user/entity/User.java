@@ -32,6 +32,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Diary> diaryList = new ArrayList<>();
 
-
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }

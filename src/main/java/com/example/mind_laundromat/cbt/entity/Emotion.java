@@ -18,6 +18,4 @@ public class Emotion {
     @Enumerated(EnumType.STRING)
     private EmotionType emotion_type;
 
-    private int level; // [1 ~ 10]
-
 }

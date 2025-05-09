@@ -25,7 +25,9 @@ public class User extends BaseEntity {
 
     private String password;
 
-    private String name;
+    private String first_name;
+
+    private String last_name;
 
     @OneToMany(mappedBy = "user")
     private List<Diary> diaryList = new ArrayList<>();

@@ -32,7 +32,8 @@ public class UserService implements UserDetailsService {
 
         User user = User.builder()
                 .email(userDTO.getEmail())
-                .name(userDTO.getName())
+                .first_name(userDTO.getFirst_name())
+                .last_name(userDTO.getLast_name())
                 .password(encodedPassword)
                 .role(Role.valueOf("MEMBER"))
                 .build();
@@ -48,8 +49,6 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
-    // 로그인
-
     // 유저 정보 조회
     public UserDTO findByUserId(String email) {
         User user = userRepository.findByEmail(email)
@@ -57,7 +56,8 @@ public class UserService implements UserDetailsService {
 
         return UserDTO.builder()
                 .email(user.getEmail())
-                .name(user.getName())
+                .first_name(user.getFirst_name())
+                .last_name(user.getLast_name())
                 .password(user.getPassword())
                 .build();
     }

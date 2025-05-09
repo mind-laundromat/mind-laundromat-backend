@@ -1,6 +1,7 @@
 package com.example.mind_laundromat.cbt.controller;
 
 import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
+import com.example.mind_laundromat.cbt.dto.SelectCbtListRequest;
 import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
 import com.example.mind_laundromat.cbt.service.CbtService;
 import com.example.mind_laundromat.response.CommonResponse;
@@ -10,6 +11,8 @@ import lombok.extern.log4j.Log4j2;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/cbt")
@@ -28,6 +31,11 @@ public class CbtController {
     @GetMapping("/{diary_id}")
     public ResponseEntity<CommonResponse<SelectCbtResponse>> selectCbt(@PathVariable("diary_id") Long diary_id) {
         return ResponseEntity.ok(ResponseBuilder.success(cbtService.selectCbt(diary_id)));
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<CommonResponse<List<SelectCbtResponse>>> selectCbtList(@RequestBody SelectCbtListRequest selectCbtListRequest) {
+        return ResponseEntity.ok(ResponseBuilder.success(cbtService.selectCbtList(selectCbtListRequest)));
     }
 
     @DeleteMapping("/{diary_id}")

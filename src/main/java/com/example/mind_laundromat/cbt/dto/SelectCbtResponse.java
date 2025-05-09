@@ -1,5 +1,6 @@
 package com.example.mind_laundromat.cbt.dto;
 
+import com.example.mind_laundromat.cbt.entity.Diary;
 import com.example.mind_laundromat.cbt.entity.EmotionType;
 import lombok.*;
 
@@ -36,4 +37,18 @@ public class SelectCbtResponse {
      * Feedback
      * */
     private String summation; // 요약
+
+    public SelectCbtResponse(Diary diary) {
+        this.user_id = diary.getUser().getUserId();
+
+        this.diary_id = diary.getDiary_id();
+        this.before_content = diary.getBefore_content();
+        this.after_content = diary.getAfter_content();
+        this.regDate = diary.getRegDate();
+        this.modDate = diary.getModDate();
+
+        this.emotion_type = diary.getEmotion().getEmotion_type();
+
+        this.summation = diary.getFeedback().getSummation();
+    }
 }

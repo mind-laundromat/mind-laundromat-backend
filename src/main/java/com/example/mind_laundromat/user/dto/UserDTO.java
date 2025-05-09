@@ -1,6 +1,5 @@
 package com.example.mind_laundromat.user.dto;
 
-import com.example.mind_laundromat.user.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +16,4 @@ public class UserDTO {
 
     private String name;
 
-    private Gender gender; //성별 [MALE, FEMALE]
 }

@@ -1,6 +1,7 @@
 package com.example.mind_laundromat.cbt.service;
 
 import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
+import com.example.mind_laundromat.cbt.dto.SelectCbtListRequest;
 import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
 import com.example.mind_laundromat.cbt.entity.Diary;
 import com.example.mind_laundromat.cbt.entity.Emotion;
@@ -15,6 +16,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -26,6 +32,7 @@ public class CbtService {
     private final EmotionRepository emotionRepository;
     private final FeedbackRepository feedbackRepository;
 
+    // CREATE CBT
     @Transactional
     public void createCbt(CreateCbtRequest createCbtRequest) {
 
@@ -60,6 +67,7 @@ public class CbtService {
         diaryRepository.save(saveDiary);
     }
 
+    // SELECT CBT
     public SelectCbtResponse selectCbt(Long diary_id) {
 
         // 1. Diary 정보 가져오기
@@ -67,8 +75,8 @@ public class CbtService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록입니다."));
 
         // 2. dto 변환
-        SelectCbtResponse response = SelectCbtResponse.builder()
-                .user_id(diary.getUser().getUser_id())
+        return SelectCbtResponse.builder()
+                .user_id(diary.getUser().getUserId())
                 .diary_id(diary.getDiary_id())
                 .before_content(diary.getBefore_content())
                 .after_content(diary.getAfter_content())
@@ -77,10 +85,25 @@ public class CbtService {
                 .emotion_type(diary.getEmotion().getEmotion_type())
                 .summation(diary.getFeedback().getSummation())
                 .build();
-
-        return response;
     }
 
+    // CREATE CBT List
+    public List<SelectCbtResponse> selectCbtList(SelectCbtListRequest selectCbtListRequest) {
+
+        // 날짜 범위 설정
+        LocalDateTime startOfDay = selectCbtListRequest.getLocalDate().atStartOfDay(); // 00:00:00
+        LocalDateTime endOfDay = selectCbtListRequest.getLocalDate().atTime(LocalTime.MAX); // 23:59:59.999999999
+
+        // Diary 리스트 조회
+        List<Diary> diaries = diaryRepository.findByUserUserIdAndRegDateBetween(selectCbtListRequest.getUser_id(), startOfDay, endOfDay);
+
+        // Diary -> SelectCbtResponse DTO로 변환
+        return diaries.stream()
+                .map(SelectCbtResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    // DELETE CBT
     public void deleteCbt(Long diary_id) {
 
         // 1. Diary 정보 가져오기

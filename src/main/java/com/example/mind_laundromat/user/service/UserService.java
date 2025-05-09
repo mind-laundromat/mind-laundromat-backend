@@ -33,7 +33,6 @@ public class UserService implements UserDetailsService {
                 .email(userDTO.getEmail())
                 .name(userDTO.getName())
                 .password(encodedPassword)
-                .gender(userDTO.getGender())
                 .role(Role.valueOf("MEMBER"))
                 .build();
 
@@ -50,5 +49,16 @@ public class UserService implements UserDetailsService {
 
     // 로그인
 
+    // 유저 정보 조회
+    public UserDTO findByUserId(Long userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+
+        return UserDTO.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .password(user.getPassword())
+                .build();
+    }
 
 }

@@ -7,6 +7,8 @@ import com.example.mind_laundromat.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +26,20 @@ public class UserController {
         return ResponseEntity.ok(ResponseBuilder.success("회원가입에 성공하였습니다."));
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<CommonResponse<UserDTO>> getUser(@PathVariable("user_id") Long user_id) {
-        return ResponseEntity.ok(ResponseBuilder.success(userService.findByUserId(user_id)));
+    @GetMapping("/info")
+    public ResponseEntity<CommonResponse<UserDTO>> getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String tokenEmail = authentication.getName();
+
+        return ResponseEntity.ok(ResponseBuilder.success(userService.findByUserId(tokenEmail)));
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<CommonResponse<String>> deleteUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String tokenEmail = authentication.getName();
+
+        userService.deleteUser(tokenEmail);
+        return ResponseEntity.ok(ResponseBuilder.success(tokenEmail + " 이 삭제되었습니다."));
     }
 }

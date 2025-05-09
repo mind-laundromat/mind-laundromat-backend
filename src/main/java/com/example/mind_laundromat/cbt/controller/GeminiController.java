@@ -22,7 +22,7 @@ public class GeminiController {
         Map<String, String> responses = new HashMap<>();
 
         String vertexAiGeminiResponse = vertexAiGeminiChatModel.call(message);
-        responses.put("vertexai(gemini) 응답", vertexAiGeminiResponse);
+        responses.put("gemini", vertexAiGeminiResponse);
         return responses;
     }
 }

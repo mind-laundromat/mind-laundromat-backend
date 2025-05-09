@@ -50,9 +50,9 @@ public class UserService implements UserDetailsService {
     // 로그인
 
     // 유저 정보 조회
-    public UserDTO findByUserId(Long userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+    public UserDTO findByUserId(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
 
         return UserDTO.builder()
                 .email(user.getEmail())
@@ -61,4 +61,8 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
+    // 유저 정보 삭제
+    public void deleteUser(String email) {
+        userRepository.deleteByEmail(email);
+    }
 }

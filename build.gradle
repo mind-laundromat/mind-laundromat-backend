@@ -35,7 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	// mariadb
-	implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+	implementation 'com.mysql:mysql-connector-j:8.3.0'
 
 	// spring ai
 	implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")

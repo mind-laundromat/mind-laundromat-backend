@@ -5,6 +5,9 @@ import com.example.mind_laundromat.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @ToString
 @Getter
@@ -33,5 +36,8 @@ public class Diary extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feedback_id")
     private Feedback feedback;
+
+    @OneToMany(mappedBy = "diary")
+    private List<DiaryDistortion> diaryDistortions = new ArrayList<>();
 
 }

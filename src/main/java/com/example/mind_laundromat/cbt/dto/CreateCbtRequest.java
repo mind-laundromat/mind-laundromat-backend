@@ -1,7 +1,10 @@
 package com.example.mind_laundromat.cbt.dto;
 
+import com.example.mind_laundromat.cbt.entity.DistortionType;
 import com.example.mind_laundromat.cbt.entity.EmotionType;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -26,11 +29,13 @@ public class CreateCbtRequest {
      * */
     private EmotionType emotion_type; // 감정 종류
 
-    private int level; // [1 ~ 10]
-
     /**
      * Feedback
      * */
     private String summation;
 
+    /**
+     * Distortion
+     * */
+    private List<DistortionType> distortions;
 }

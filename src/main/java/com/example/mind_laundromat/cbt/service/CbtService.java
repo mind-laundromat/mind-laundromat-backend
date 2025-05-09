@@ -3,12 +3,8 @@ package com.example.mind_laundromat.cbt.service;
 import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
 import com.example.mind_laundromat.cbt.dto.SelectCbtListRequest;
 import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
-import com.example.mind_laundromat.cbt.entity.Diary;
-import com.example.mind_laundromat.cbt.entity.Emotion;
-import com.example.mind_laundromat.cbt.entity.Feedback;
-import com.example.mind_laundromat.cbt.repository.DiaryRepository;
-import com.example.mind_laundromat.cbt.repository.EmotionRepository;
-import com.example.mind_laundromat.cbt.repository.FeedbackRepository;
+import com.example.mind_laundromat.cbt.entity.*;
+import com.example.mind_laundromat.cbt.repository.*;
 import com.example.mind_laundromat.user.entity.User;
 import com.example.mind_laundromat.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -18,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +28,8 @@ public class CbtService {
     private final UserRepository userRepository;
     private final EmotionRepository emotionRepository;
     private final FeedbackRepository feedbackRepository;
+    private final DistortionRepository distortionRepository;
+    private final DiaryDistortionRepository diaryDistortionRepository;
 
     // CREATE CBT
     @Transactional
@@ -64,6 +63,22 @@ public class CbtService {
         saveDiary.setEmotion(saveEmotion);
         saveDiary.setFeedback(saveFeedback);
 
+        saveDiary.setDiaryDistortions(new ArrayList<>());
+        System.out.println(saveDiary.getDiaryDistortions());
+
+        // 6.
+        for (DistortionType distortionType : createCbtRequest.getDistortions()) {
+            Distortion distortion = distortionRepository.findByDistortionType(distortionType)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 인지 왜곡 유형입니다: " + distortionType));
+
+            DiaryDistortion diaryDistortion = new DiaryDistortion();
+            diaryDistortion.setDiary(saveDiary);
+            diaryDistortion.setDistortion(distortion);
+            DiaryDistortion saveDiaryDistortion = diaryDistortionRepository.save(diaryDistortion);
+
+            saveDiary.getDiaryDistortions().add(saveDiaryDistortion);
+        }
+
         diaryRepository.save(saveDiary);
     }
 
@@ -84,6 +99,11 @@ public class CbtService {
                 .modDate(diary.getModDate())
                 .emotion_type(diary.getEmotion().getEmotion_type())
                 .summation(diary.getFeedback().getSummation())
+                .distortion_type(
+                        diary.getDiaryDistortions().stream()
+                                .map(dd -> dd.getDistortion().getDistortionType())
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 

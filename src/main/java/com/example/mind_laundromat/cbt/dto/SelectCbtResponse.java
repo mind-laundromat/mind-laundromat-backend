@@ -1,10 +1,13 @@
 package com.example.mind_laundromat.cbt.dto;
 
 import com.example.mind_laundromat.cbt.entity.Diary;
+import com.example.mind_laundromat.cbt.entity.DistortionType;
 import com.example.mind_laundromat.cbt.entity.EmotionType;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -38,6 +41,12 @@ public class SelectCbtResponse {
      * */
     private String summation; // 요약
 
+    /**
+     * Distortion
+     * */
+    private List<DistortionType> distortion_type; // 인지 왜곡 종류
+
+
     public SelectCbtResponse(Diary diary) {
         this.user_id = diary.getUser().getUserId();
 
@@ -50,5 +59,9 @@ public class SelectCbtResponse {
         this.emotion_type = diary.getEmotion().getEmotion_type();
 
         this.summation = diary.getFeedback().getSummation();
+
+        this.distortion_type = diary.getDiaryDistortions().stream()
+                .map(diaryDistortion -> diaryDistortion.getDistortion().getDistortionType())
+                .collect(Collectors.toList());
     }
 }

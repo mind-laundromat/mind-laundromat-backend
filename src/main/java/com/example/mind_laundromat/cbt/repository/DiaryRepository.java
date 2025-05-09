@@ -7,6 +7,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-
-    List<Diary> findByUserUserIdAndRegDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Diary> findByUserEmailAndRegDateBetween(String email, LocalDateTime startDate, LocalDateTime endDate);
 }

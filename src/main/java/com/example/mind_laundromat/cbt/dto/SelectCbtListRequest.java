@@ -9,9 +9,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class SelectCbtListRequest {
-
-    private Long user_id;
-
+    private String email;
     private LocalDate localDate;
 }

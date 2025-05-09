@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -31,12 +32,13 @@ public class CbtService {
     private final DistortionRepository distortionRepository;
     private final DiaryDistortionRepository diaryDistortionRepository;
 
+
     // CREATE CBT
     @Transactional
     public void createCbt(CreateCbtRequest createCbtRequest) {
 
         // 1. User 정보 확인
-        User user = userRepository.findById(createCbtRequest.getUser_id())
+        User user = userRepository.findByEmail(createCbtRequest.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         // 2. Diary 저장
@@ -107,7 +109,7 @@ public class CbtService {
                 .build();
     }
 
-    // CREATE CBT List
+    // SELECT CBT List
     public List<SelectCbtResponse> selectCbtList(SelectCbtListRequest selectCbtListRequest) {
 
         // 날짜 범위 설정
@@ -115,12 +117,37 @@ public class CbtService {
         LocalDateTime endOfDay = selectCbtListRequest.getLocalDate().atTime(LocalTime.MAX); // 23:59:59.999999999
 
         // Diary 리스트 조회
-        List<Diary> diaries = diaryRepository.findByUserUserIdAndRegDateBetween(selectCbtListRequest.getUser_id(), startOfDay, endOfDay);
+        List<Diary> diaries = diaryRepository.findByUserEmailAndRegDateBetween(selectCbtListRequest.getEmail(), startOfDay, endOfDay);
 
         // Diary -> SelectCbtResponse DTO로 변환
         return diaries.stream()
                 .map(SelectCbtResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    // SELECT CBT DATE
+    public List<LocalDate> selectCbtDateList(SelectCbtListRequest selectCbtListRequest){
+
+        // LocalDate 추출
+        LocalDate localDate = selectCbtListRequest.getLocalDate();
+
+        // 해당 달의 시작일과 마지막일 계산
+        LocalDate startDate = localDate.withDayOfMonth(1);
+        LocalDate endDate = localDate.withDayOfMonth(localDate.lengthOfMonth());
+
+        // LocalDateTime 범위로 변환
+        LocalDateTime startDateTime = startDate.atStartOfDay(); // 00:00:00
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX); // 23:59:59.999999999
+
+        // 해당 범위 내의 Diary 목록을 가져옴
+        List<Diary> diaries = diaryRepository.findByUserEmailAndRegDateBetween(selectCbtListRequest.getEmail(), startDateTime, endDateTime);
+
+        // 중복 제거 및 날짜만 추출해서 반환
+        return diaries.stream()
+                .map(diary -> diary.getRegDate().toLocalDate())
+                .distinct()
+                .sorted()
+                .toList();
     }
 
     // DELETE CBT

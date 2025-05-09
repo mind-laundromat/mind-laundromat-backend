@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
     }
 
     // 유저 정보 조회
-    public UserDTO findByUserId(String email) {
+    public UserDTO findByUserEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
 

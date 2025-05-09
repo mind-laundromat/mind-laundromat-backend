@@ -10,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,6 +27,9 @@ public class CbtController {
 
     @PostMapping()
     public ResponseEntity<CommonResponse<String>> createBoard(@RequestBody CreateCbtRequest createCbtRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        createCbtRequest.setEmail(authentication.getName());
+
         cbtService.createCbt(createCbtRequest);
         return ResponseEntity.ok(ResponseBuilder.success("등록하였습니다."));
     }
@@ -35,7 +41,18 @@ public class CbtController {
 
     @PostMapping("/list")
     public ResponseEntity<CommonResponse<List<SelectCbtResponse>>> selectCbtList(@RequestBody SelectCbtListRequest selectCbtListRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        selectCbtListRequest.setEmail(authentication.getName());
+
         return ResponseEntity.ok(ResponseBuilder.success(cbtService.selectCbtList(selectCbtListRequest)));
+    }
+
+    @PostMapping("/month/list")
+    public ResponseEntity<CommonResponse<List<LocalDate>>> selectCbtListMonth(@RequestBody SelectCbtListRequest selectCbtListRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        selectCbtListRequest.setEmail(authentication.getName());
+
+        return ResponseEntity.ok(ResponseBuilder.success(cbtService.selectCbtDateList(selectCbtListRequest)));
     }
 
     @DeleteMapping("/{diary_id}")

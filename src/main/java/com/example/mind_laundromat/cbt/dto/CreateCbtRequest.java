@@ -15,7 +15,7 @@ public class CreateCbtRequest {
     /**
      * User
      * */
-    private Long user_id;
+    private String email;
 
     /**
      * Diary

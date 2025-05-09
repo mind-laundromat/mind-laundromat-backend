@@ -31,7 +31,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String tokenEmail = authentication.getName();
 
-        return ResponseEntity.ok(ResponseBuilder.success(userService.findByUserId(tokenEmail)));
+        return ResponseEntity.ok(ResponseBuilder.success(userService.findByUserEmail(tokenEmail)));
     }
 
     @DeleteMapping()

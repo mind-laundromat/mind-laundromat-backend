@@ -5,6 +5,7 @@ import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.entity.Role;
 import com.example.mind_laundromat.user.entity.User;
 import com.example.mind_laundromat.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -62,6 +63,7 @@ public class UserService implements UserDetailsService {
     }
 
     // 유저 정보 삭제
+    @Transactional
     public void deleteUser(String email) {
         userRepository.deleteByEmail(email);
     }

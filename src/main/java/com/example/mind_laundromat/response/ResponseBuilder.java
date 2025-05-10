@@ -24,4 +24,13 @@ public class ResponseBuilder {
                 .data(null)
                 .build();
     }
+
+    public static <T> CommonResponse<T> error(ResponseCode code, String message) {
+        return CommonResponse.<T>builder()
+                .code(code.getCode())
+                .message(message)
+                .data(null)
+                .build();
+    }
+
 }

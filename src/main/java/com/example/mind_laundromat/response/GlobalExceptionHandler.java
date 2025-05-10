@@ -3,16 +3,16 @@ package com.example.mind_laundromat.response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestController
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<CommonResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ResponseBuilder.error(ResponseCode.BAD_REQUEST));
+                .body(ResponseBuilder.error(ResponseCode.BAD_REQUEST, ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

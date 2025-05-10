@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
     // 회원가입
     public void registerUser(UserDTO userDTO) {
         if(userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            throw new IllegalArgumentException("This email already exists.");
         }
 
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());

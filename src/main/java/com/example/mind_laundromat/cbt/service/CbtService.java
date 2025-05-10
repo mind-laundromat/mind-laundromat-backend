@@ -58,6 +58,7 @@ public class CbtService {
         // 4. Feedback 저장
         Feedback feedback = Feedback.builder()
                 .summation(createCbtRequest.getSummation())
+                .solution(createCbtRequest.getSolution())
                 .build();
         Feedback saveFeedback = feedbackRepository.save(feedback);
 
@@ -101,6 +102,7 @@ public class CbtService {
                 .modDate(diary.getModDate())
                 .emotion_type(diary.getEmotion().getEmotion_type())
                 .summation(diary.getFeedback().getSummation())
+                .solution(diary.getFeedback().getSolution())
                 .distortion_type(
                         diary.getDiaryDistortions().stream()
                                 .map(dd -> dd.getDistortion().getDistortionType())

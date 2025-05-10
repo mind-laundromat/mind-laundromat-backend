@@ -41,6 +41,8 @@ public class SelectCbtResponse {
      * */
     private String summation; // 요약
 
+    private String solution; // 솔루션
+
     /**
      * Distortion
      * */
@@ -59,6 +61,7 @@ public class SelectCbtResponse {
         this.emotion_type = diary.getEmotion().getEmotion_type();
 
         this.summation = diary.getFeedback().getSummation();
+        this.solution = diary.getFeedback().getSolution();
 
         this.distortion_type = diary.getDiaryDistortions().stream()
                 .map(diaryDistortion -> diaryDistortion.getDistortion().getDistortionType())

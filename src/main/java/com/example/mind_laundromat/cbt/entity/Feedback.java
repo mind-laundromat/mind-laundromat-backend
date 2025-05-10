@@ -16,4 +16,6 @@ public class Feedback {
     private int feedback_id;
 
     private String summation;
+
+    private String solution;
 }

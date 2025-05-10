@@ -34,6 +34,8 @@ public class CreateCbtRequest {
      * */
     private String summation;
 
+    private String solution;
+
     /**
      * Distortion
      * */

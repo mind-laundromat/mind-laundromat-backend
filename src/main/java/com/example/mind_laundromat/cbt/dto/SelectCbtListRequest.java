@@ -13,4 +13,5 @@ import java.time.LocalDate;
 public class SelectCbtListRequest {
     private String email;
     private LocalDate localDate;
+    private String timezone;
 }

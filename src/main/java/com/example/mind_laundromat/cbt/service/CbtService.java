@@ -10,11 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -112,43 +111,62 @@ public class CbtService {
     // SELECT CBT List
     public List<SelectCbtResponse> selectCbtList(SelectCbtListRequest selectCbtListRequest) {
 
-        // 날짜 범위 설정
-        LocalDateTime startOfDay = selectCbtListRequest.getLocalDate().atStartOfDay(); // 00:00:00
-        LocalDateTime endOfDay = selectCbtListRequest.getLocalDate().atTime(LocalTime.MAX); // 23:59:59.999999999
+        // 1. 타임존이 null일 경우 기본값 설정 (예: UTC)
+        String timezone = Optional.ofNullable(selectCbtListRequest.getTimezone()).orElse("UTC");
+        ZoneId userZoneId = ZoneId.of(timezone);
 
-        // Diary 리스트 조회
-        List<Diary> diaries = diaryRepository.findByUserEmailAndRegDateBetween(selectCbtListRequest.getEmail(), startOfDay, endOfDay);
+        // 2. 사용자의 날짜 기준 하루의 시작과 끝 (타임존 포함)
+        LocalDate userLocalDate = selectCbtListRequest.getLocalDate();
 
-        // Diary -> SelectCbtResponse DTO로 변환
+        ZonedDateTime startZdt = userLocalDate.atStartOfDay(userZoneId);  // 00:00:00
+        ZonedDateTime endZdt = userLocalDate.atTime(LocalTime.MAX).atZone(userZoneId); // 23:59:59.999999999
+
+        // 3. UTC 기준 시간으로 변환
+        LocalDateTime utcStart = startZdt.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        LocalDateTime utcEnd = endZdt.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+
+        // 4. 해당 범위의 다이어리 조회 (DB는 UTC 기준으로 저장된 regDate 사용)
+        List<Diary> diaries = diaryRepository.findByUserEmailAndRegDateBetween(
+                selectCbtListRequest.getEmail(), utcStart, utcEnd
+        );
+
+        // 5. 변환
         return diaries.stream()
                 .map(SelectCbtResponse::new)
                 .collect(Collectors.toList());
     }
 
     // SELECT CBT DATE
-    public List<LocalDate> selectCbtDateList(SelectCbtListRequest selectCbtListRequest){
+    public List<LocalDate> selectCbtDateList(SelectCbtListRequest selectCbtListRequest) {
 
-        // LocalDate 추출
         LocalDate localDate = selectCbtListRequest.getLocalDate();
+        String timezone = selectCbtListRequest.getTimezone(); // ex: "Asia/Seoul"
 
-        // 해당 달의 시작일과 마지막일 계산
-        LocalDate startDate = localDate.withDayOfMonth(1);
-        LocalDate endDate = localDate.withDayOfMonth(localDate.lengthOfMonth());
+        ZoneId userZoneId = ZoneId.of(timezone);
 
-        // LocalDateTime 범위로 변환
-        LocalDateTime startDateTime = startDate.atStartOfDay(); // 00:00:00
-        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX); // 23:59:59.999999999
+        // 해당 달의 첫날 00:00:00 (사용자 로컬 기준)
+        ZonedDateTime startZdt = localDate.withDayOfMonth(1).atStartOfDay(userZoneId);
 
-        // 해당 범위 내의 Diary 목록을 가져옴
-        List<Diary> diaries = diaryRepository.findByUserEmailAndRegDateBetween(selectCbtListRequest.getEmail(), startDateTime, endDateTime);
+        // 해당 달의 마지막날 23:59:59.999 (사용자 로컬 기준)
+        LocalDate lastDay = localDate.withDayOfMonth(localDate.lengthOfMonth());
+        ZonedDateTime endZdt = lastDay.atTime(LocalTime.MAX).atZone(userZoneId);
 
-        // 중복 제거 및 날짜만 추출해서 반환
+        // UTC 기준으로 변환
+        LocalDateTime utcStart = startZdt.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        LocalDateTime utcEnd = endZdt.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+
+        // 다이어리 조회 (regDate는 UTC로 저장되었음)
+        List<Diary> diaries = diaryRepository.findByUserEmailAndRegDateBetween(
+                selectCbtListRequest.getEmail(), utcStart, utcEnd
+        );
+
         return diaries.stream()
-                .map(diary -> diary.getRegDate().toLocalDate())
+                .map(diary -> diary.getRegDate().atZone(ZoneOffset.UTC).withZoneSameInstant(userZoneId).toLocalDate())
                 .distinct()
                 .sorted()
                 .toList();
     }
+
 
     // DELETE CBT
     public void deleteCbt(Long diary_id) {

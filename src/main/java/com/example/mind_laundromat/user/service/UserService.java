@@ -1,7 +1,9 @@
 package com.example.mind_laundromat.user.service;
 
+import com.example.mind_laundromat.cbt.entity.EmotionType;
 import com.example.mind_laundromat.user.dto.CustomUserDetails;
 import com.example.mind_laundromat.user.dto.UpdateUserName;
+import com.example.mind_laundromat.user.dto.UpdateUserProfileEmotion;
 import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.entity.Role;
 import com.example.mind_laundromat.user.entity.User;
@@ -38,6 +40,7 @@ public class UserService implements UserDetailsService {
                 .last_name(userDTO.getLast_name())
                 .password(encodedPassword)
                 .role(Role.valueOf("MEMBER"))
+                .profile_emotion(EmotionType.HAPPINESS)
                 .build();
 
         userRepository.save(user);
@@ -76,7 +79,24 @@ public class UserService implements UserDetailsService {
         Long userId = userRepository.selectIdByEmail(updateUserName.getEmail());
 
         if(userRepository.updateUserName(userId, updateUserName.getFirst_name(), updateUserName.getLast_name()) != 1){
-            throw new EntityNotFoundException("해당 사용자를 찾을 수 없습니다.");
+            throw new EntityNotFoundException("error updateUserName");
+        }
+    }
+
+    // 유저 프로필 아이콘 변경
+    @Transactional
+    public void updateProfileEmotion(UpdateUserProfileEmotion updateUserProfileEmotion) {
+        Long userId = userRepository.selectIdByEmail(updateUserProfileEmotion.getEmail());
+
+        EmotionType emotionType;
+        try {
+            emotionType = EmotionType.valueOf(updateUserProfileEmotion.getEmotion_name());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 감정 타입입니다: " + updateUserProfileEmotion.getEmotion_name());
+        }
+
+        if(userRepository.updateProfileEmotion(userId, emotionType) != 1){
+            throw new EntityNotFoundException("error updateProfileEmotion");
         }
     }
 }

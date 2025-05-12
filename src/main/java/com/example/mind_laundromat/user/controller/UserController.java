@@ -3,6 +3,7 @@ package com.example.mind_laundromat.user.controller;
 import com.example.mind_laundromat.response.CommonResponse;
 import com.example.mind_laundromat.response.ResponseBuilder;
 import com.example.mind_laundromat.user.dto.UpdateUserName;
+import com.example.mind_laundromat.user.dto.UpdateUserProfileEmotion;
 import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,15 @@ public class UserController {
 
         return ResponseEntity.ok(ResponseBuilder.success("이름이 " + updateUserName.getFirst_name() + " "
                 + updateUserName.getLast_name() + "로 업데이트 되었습니다."));
+    }
+
+    @PatchMapping("/emotion")
+    public ResponseEntity<CommonResponse<String>> updateUserProfileEmotion(@RequestBody UpdateUserProfileEmotion updateUserProfileEmotion) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        updateUserProfileEmotion.setEmail(authentication.getName());
+        userService.updateProfileEmotion(updateUserProfileEmotion);
+
+        return ResponseEntity.ok(ResponseBuilder.success("프로필 이모지가 "
+                + updateUserProfileEmotion.getEmotion_name() + "으로 업데이트 되었습니다."));
     }
 }

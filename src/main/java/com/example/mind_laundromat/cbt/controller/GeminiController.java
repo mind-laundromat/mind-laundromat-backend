@@ -69,14 +69,20 @@ public class GeminiController {
                     email,
                     emotion
             );
+
+            try {
+                Long diaryId = Long.parseLong(result); // 숫자일 경우
+                responses.put("diary_id", String.valueOf(diaryId));
+            } catch (NumberFormatException e) {
+                responses.put("message", result); // "종료되었습니다." 같은 텍스트일 경우
+            }
+
+            return responses;
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        session.removeAttribute("chatbotSession");
-        responses.put("gemini", result);
-        return responses;
     }
-
 
 }

@@ -32,7 +32,7 @@ public class CbtService {
 
     // CREATE CBT
     @Transactional
-    public void createCbt(CreateCbtRequest createCbtRequest) {
+    public Long createCbt(CreateCbtRequest createCbtRequest) {
 
         // 1. User 정보 확인
         User user = userRepository.findByEmail(createCbtRequest.getEmail())
@@ -80,6 +80,8 @@ public class CbtService {
         }
 
         diaryRepository.save(saveDiary);
+
+        return saveDiary.getDiary_id();
     }
 
     // SELECT CBT

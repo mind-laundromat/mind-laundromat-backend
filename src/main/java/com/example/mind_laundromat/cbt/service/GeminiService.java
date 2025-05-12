@@ -65,7 +65,8 @@ public class GeminiService {
                 sessionData.put("conversationHistory", history);
                 CreateCbtRequest request = saveCbtFromSummary(summary, email, emotion);
                 if (request != null) {
-                    cbtService.createCbt(request);
+                    Long diaryId = cbtService.createCbt(request); // ID를 반환하는 메서드로 변경
+                    return String.valueOf(diaryId);
                 }
                 return "종료되었습니다."; // 이건 위에서 생성된 summary
             }

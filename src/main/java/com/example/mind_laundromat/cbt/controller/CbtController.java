@@ -1,9 +1,6 @@
 package com.example.mind_laundromat.cbt.controller;
 
-import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
-import com.example.mind_laundromat.cbt.dto.DistortionCount;
-import com.example.mind_laundromat.cbt.dto.SelectCbtListRequest;
-import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
+import com.example.mind_laundromat.cbt.dto.*;
 import com.example.mind_laundromat.cbt.service.CbtService;
 import com.example.mind_laundromat.response.CommonResponse;
 import com.example.mind_laundromat.response.ResponseBuilder;
@@ -63,7 +60,7 @@ public class CbtController {
     }
 
     @GetMapping("/distortion/list")
-    public ResponseEntity<CommonResponse<List<DistortionCount>>> distortionList() {
+    public ResponseEntity<CommonResponse<DistortionListRequest>> distortionList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         return ResponseEntity.ok(ResponseBuilder.success(cbtService.sortDistortion(authentication.getName())));

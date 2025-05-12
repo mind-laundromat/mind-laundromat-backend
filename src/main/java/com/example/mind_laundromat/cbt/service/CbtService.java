@@ -1,9 +1,6 @@
 package com.example.mind_laundromat.cbt.service;
 
-import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
-import com.example.mind_laundromat.cbt.dto.DistortionCount;
-import com.example.mind_laundromat.cbt.dto.SelectCbtListRequest;
-import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
+import com.example.mind_laundromat.cbt.dto.*;
 import com.example.mind_laundromat.cbt.entity.*;
 import com.example.mind_laundromat.cbt.repository.*;
 import com.example.mind_laundromat.user.entity.User;
@@ -165,9 +162,12 @@ public class CbtService {
     }
 
     // Distortion count
-    public List<DistortionCount> sortDistortion(String email) {
+    public DistortionListRequest sortDistortion(String email) {
         Long user_id = userRepository.selectIdByEmail(email);
 
-        return diaryRepository.sortDistortion(user_id);
+        return DistortionListRequest.builder()
+                .distortionList(diaryRepository.sortDistortion(user_id))
+                .total(diaryDistortionRepository.countDiaryDistortionByDiary_User_UserId(user_id))
+                .build();
     }
 }

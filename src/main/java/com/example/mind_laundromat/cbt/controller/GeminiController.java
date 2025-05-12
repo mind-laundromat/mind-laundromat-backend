@@ -26,7 +26,7 @@ public class GeminiController {
         this.geminiService = geminiService;
     }
 
-    @GetMapping("/chat")
+    @PostMapping("/chat")
     public Map<String, String> chat(@RequestBody String message, HttpSession session) {
         Map<String, String> responses = new HashMap<>();
         Map<String, Object> sessionData = (Map<String, Object>) session.getAttribute("chatbotSession");

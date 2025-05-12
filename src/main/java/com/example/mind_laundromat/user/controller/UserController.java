@@ -2,8 +2,7 @@ package com.example.mind_laundromat.user.controller;
 
 import com.example.mind_laundromat.response.CommonResponse;
 import com.example.mind_laundromat.response.ResponseBuilder;
-import com.example.mind_laundromat.user.dto.UpdateUserName;
-import com.example.mind_laundromat.user.dto.UpdateUserProfileEmotion;
+import com.example.mind_laundromat.user.dto.UpdateUserDTO;
 import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,23 +44,14 @@ public class UserController {
         return ResponseEntity.ok(ResponseBuilder.success(tokenEmail + " 이 삭제되었습니다."));
     }
 
-    @PatchMapping("/name")
-    public ResponseEntity<CommonResponse<String>> updateUserName(@RequestBody UpdateUserName updateUserName) {
+    @PatchMapping("/update")
+    public ResponseEntity<CommonResponse<String>> updateUser(@RequestBody UpdateUserDTO updateUserDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updateUserName.setEmail(authentication.getName());
-        userService.updateUserName(updateUserName);
+        updateUserDTO.setEmail(authentication.getName());
+        userService.updateUser(updateUserDTO);
 
-        return ResponseEntity.ok(ResponseBuilder.success("이름이 " + updateUserName.getFirst_name() + " "
-                + updateUserName.getLast_name() + "로 업데이트 되었습니다."));
-    }
-
-    @PatchMapping("/emotion")
-    public ResponseEntity<CommonResponse<String>> updateUserProfileEmotion(@RequestBody UpdateUserProfileEmotion updateUserProfileEmotion) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        updateUserProfileEmotion.setEmail(authentication.getName());
-        userService.updateProfileEmotion(updateUserProfileEmotion);
-
-        return ResponseEntity.ok(ResponseBuilder.success("프로필 이모지가 "
-                + updateUserProfileEmotion.getEmotion_name() + "으로 업데이트 되었습니다."));
+        return ResponseEntity.ok(ResponseBuilder.success("이름이 " + updateUserDTO.getFirst_name() + " "
+                + updateUserDTO.getLast_name() + "로 업데이트 되었습니다.\n"
+        + "이모지가 " + updateUserDTO.getEmotion_name() + " 로 업데이트 되었습니다."));
     }
 }

@@ -2,8 +2,7 @@ package com.example.mind_laundromat.user.service;
 
 import com.example.mind_laundromat.cbt.entity.EmotionType;
 import com.example.mind_laundromat.user.dto.CustomUserDetails;
-import com.example.mind_laundromat.user.dto.UpdateUserName;
-import com.example.mind_laundromat.user.dto.UpdateUserProfileEmotion;
+import com.example.mind_laundromat.user.dto.UpdateUserDTO;
 import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.entity.Role;
 import com.example.mind_laundromat.user.entity.User;
@@ -73,30 +72,24 @@ public class UserService implements UserDetailsService {
         userRepository.deleteByEmail(email);
     }
 
-    // 유저 이름 변경
     @Transactional
-    public void updateUserName(UpdateUserName updateUserName) {
-        Long userId = userRepository.selectIdByEmail(updateUserName.getEmail());
+    public void updateUser(UpdateUserDTO updateUserDTO){
+        Long userId = userRepository.selectIdByEmail(updateUserDTO.getEmail());
 
-        if(userRepository.updateUserName(userId, updateUserName.getFirst_name(), updateUserName.getLast_name()) != 1){
+        if(userRepository.updateUserName(userId, updateUserDTO.getFirst_name(), updateUserDTO.getLast_name()) != 1){
             throw new EntityNotFoundException("error updateUserName");
         }
-    }
-
-    // 유저 프로필 아이콘 변경
-    @Transactional
-    public void updateProfileEmotion(UpdateUserProfileEmotion updateUserProfileEmotion) {
-        Long userId = userRepository.selectIdByEmail(updateUserProfileEmotion.getEmail());
 
         EmotionType emotionType;
         try {
-            emotionType = EmotionType.valueOf(updateUserProfileEmotion.getEmotion_name());
+            emotionType = EmotionType.valueOf(updateUserDTO.getEmotion_name());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 감정 타입입니다: " + updateUserProfileEmotion.getEmotion_name());
+            throw new IllegalArgumentException("유효하지 않은 감정 타입입니다: " + updateUserDTO.getEmotion_name());
         }
 
         if(userRepository.updateProfileEmotion(userId, emotionType) != 1){
             throw new EntityNotFoundException("error updateProfileEmotion");
         }
     }
+
 }

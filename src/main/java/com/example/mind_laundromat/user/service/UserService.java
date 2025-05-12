@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
                 .email(user.getEmail())
                 .first_name(user.getFirst_name())
                 .last_name(user.getLast_name())
-                .password(user.getPassword())
+                .emotion(user.getProfile_emotion())
                 .build();
     }
 

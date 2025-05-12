@@ -1,5 +1,6 @@
 package com.example.mind_laundromat.user.dto;
 
+import com.example.mind_laundromat.cbt.entity.EmotionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,7 @@ public class UserDTO {
     private String first_name;
 
     private String last_name;
+
+    private EmotionType emotion;
 
 }

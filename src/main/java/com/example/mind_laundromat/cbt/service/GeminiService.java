@@ -15,8 +15,12 @@ public class GeminiService {
 
     private static final String INITIAL_PROMPT_TEMPLATE = "당신은 사용자의 마음 건강을 돕는 CBT 기반 챗봇입니다. " +
             "사용자가 기록한 내용에 대해 공감하며, 어떤 감정을 느끼고 있는지, 어떤 생각을 하고 있는지 질문해주세요.";
-    private static final String IDENTIFY_DISTORTION_PROMPT_TEMPLATE = "사용자의 기록을 분석하여 '{사용자가 기록한 생각}'에서 나타나는 인지적 오류를 지적하고, " +
-            "더 건강한 생각을 할 수 있도록 질문해주세요. 가능한 인지적 오류 목록: {cognitiveDistortionList}.";
+    private static final String IDENTIFY_DISTORTION_PROMPT_TEMPLATE = "당신은 사용자의 마음 건강을 돕는 CBT 기반 챗봇입니다. " +
+            "다음은 지금까지 대화의 요약입니다. {사용자가 기록한 생각} 이 전체 기록은 참고용으로만 사용하세요. " +
+            "{마지막 메시지} 이 마지막 메시지에 집중하여, 인지적 오류(왜곡된 생각)가 보이면 어떤 유형인지 짚어주고, 더 건강한 생각을 할 수 있도록 질문해주세요. 가능한 인지적 오류 목록: {cognitiveDistortionList}." +
+            "만약 인지적 오류가 보이지 않는다면, 감정을 공감해주고 자연스럽게 대화를 이어가 주세요." +
+            "※ 대화가 충분히 진행되어 사용자의 감정과 생각이 정리되었다고 판단되면,\"오늘 대화를 여기서 마무리해도 괜찮을까요?\" 와 같이 자연스럽게 종료를 제안해 주세요. " +
+            "아직 충분하지 않다면 공감과 질문을 이어가 주세요.";
 
     public GeminiService(VertexAiGeminiChatModel vertexAiGeminiChatModel){
         this.vertexAiGeminiChatModel = vertexAiGeminiChatModel;
@@ -29,12 +33,31 @@ public class GeminiService {
         if (sessionData.isEmpty() || !sessionData.containsKey("conversationHistory")) {
             prompt = INITIAL_PROMPT_TEMPLATE;
         } else {
-            List<String> history = (List<String>) sessionData.get("conversationHistory");
-            String lastUserMessage = history.get(history.size() - 1);
+            List<String> history = (List<String>) sessionData.get("conversationHistory"); // 사용자 입력 저장
+
+            // 전체 대화 불러오기
+            StringBuilder fullConversation = new StringBuilder();
+            for (String message : history) {
+                fullConversation.append(message).append("\n");
+            }
+
+            String summaryPrompt = "다음은 사용자와 상담사의 대화입니다.\n" +
+                    "이 대화를 요약할 때, 단순한 분위기 요약이 아닌 다음 사항을 꼭 포함해 주세요:\n" +
+                    "- 사용자가 보인 반복적인 인지적 왜곡 유형 (예: 이분법적 사고, 과일반화 등)\n" +
+                    "- 사용자가 표현한 주요 감정 (예: 불안, 무기력, 자책 등)\n" +
+                    "- 사용자가 반복적으로 보인 사고 패턴\n" +
+                    "- 상담사가 제공한 주요 피드백이나 질문 방식\n" +
+                    "요약은 핵심 내용이 빠지지 않도록 3~10문장 이내로 정리해주세요.\n" +
+                    "대화:" + fullConversation;
+
+            String summary = vertexAiGeminiChatModel.call(summaryPrompt);
+
+            history.add("요약: " + summary);
 
             if (/* 감정 왜곡 감지 */ true) {
                 String cognitiveDistortionList = String.join(", ", DistortionType.getAllDistortions());
-                prompt = IDENTIFY_DISTORTION_PROMPT_TEMPLATE.replace("{사용자가 기록한 생각}", lastUserMessage)
+                prompt = IDENTIFY_DISTORTION_PROMPT_TEMPLATE.replace("{사용자가 기록한 생각}", summary)
+                        .replace("{마지막 메시지}", userMessage)
                         .replace("{cognitiveDistortionList}", cognitiveDistortionList);
             } else {
                 prompt = "사용자님의 이야기에 공감하며, 더 자세히 이야기해 주시겠어요?";
@@ -43,12 +66,16 @@ public class GeminiService {
 
         String finalPrompt = prompt + "\n사용자 메시지: " + userMessage;
 
-        // 대화 내용을 sessionData에 저장
+        // Gemini 응답 받기
+        String response = vertexAiGeminiChatModel.call(finalPrompt);
+
+        // 사용자 입력을 sessionData에 저장
         List<String> history = (List<String>) sessionData.getOrDefault("conversationHistory", new ArrayList<>());
-        history.add(userMessage);
+        history.add("사용자: " + userMessage);
+        history.add("상담사: " + response);
         sessionData.put("conversationHistory", history);
 
-        return vertexAiGeminiChatModel.call(finalPrompt);
+        return response;
     }
 
 }

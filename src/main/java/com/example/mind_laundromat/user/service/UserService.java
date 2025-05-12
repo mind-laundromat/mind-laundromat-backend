@@ -1,10 +1,12 @@
 package com.example.mind_laundromat.user.service;
 
 import com.example.mind_laundromat.user.dto.CustomUserDetails;
+import com.example.mind_laundromat.user.dto.UpdateUserName;
 import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.entity.Role;
 import com.example.mind_laundromat.user.entity.User;
 import com.example.mind_laundromat.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -66,5 +68,15 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void deleteUser(String email) {
         userRepository.deleteByEmail(email);
+    }
+
+    // 유저 이름 변경
+    @Transactional
+    public void updateUserName(UpdateUserName updateUserName) {
+        Long userId = userRepository.selectIdByEmail(updateUserName.getEmail());
+
+        if(userRepository.updateUserName(userId, updateUserName.getFirst_name(), updateUserName.getLast_name()) != 1){
+            throw new EntityNotFoundException("해당 사용자를 찾을 수 없습니다.");
+        }
     }
 }

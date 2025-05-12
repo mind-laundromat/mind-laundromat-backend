@@ -1,6 +1,7 @@
 package com.example.mind_laundromat.cbt.controller;
 
 import com.example.mind_laundromat.cbt.dto.CreateCbtRequest;
+import com.example.mind_laundromat.cbt.dto.DistortionCount;
 import com.example.mind_laundromat.cbt.dto.SelectCbtListRequest;
 import com.example.mind_laundromat.cbt.dto.SelectCbtResponse;
 import com.example.mind_laundromat.cbt.service.CbtService;
@@ -59,6 +60,13 @@ public class CbtController {
     public ResponseEntity<CommonResponse<String>> deleteCbt(@PathVariable("diary_id") Long diary_id) {
         cbtService.deleteCbt(diary_id);
         return ResponseEntity.ok(ResponseBuilder.success("삭제하였습니다."));
+    }
+
+    @GetMapping("/distortion/list")
+    public ResponseEntity<CommonResponse<List<DistortionCount>>> distortionList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return ResponseEntity.ok(ResponseBuilder.success(cbtService.sortDistortion(authentication.getName())));
     }
 
 }

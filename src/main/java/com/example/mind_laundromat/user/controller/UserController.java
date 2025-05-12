@@ -2,6 +2,7 @@ package com.example.mind_laundromat.user.controller;
 
 import com.example.mind_laundromat.response.CommonResponse;
 import com.example.mind_laundromat.response.ResponseBuilder;
+import com.example.mind_laundromat.user.dto.UpdateUserName;
 import com.example.mind_laundromat.user.dto.UserDTO;
 import com.example.mind_laundromat.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,15 @@ public class UserController {
 
         userService.deleteUser(tokenEmail);
         return ResponseEntity.ok(ResponseBuilder.success(tokenEmail + " 이 삭제되었습니다."));
+    }
+
+    @PatchMapping("/name")
+    public ResponseEntity<CommonResponse<String>> updateUserName(@RequestBody UpdateUserName updateUserName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        updateUserName.setEmail(authentication.getName());
+        userService.updateUserName(updateUserName);
+
+        return ResponseEntity.ok(ResponseBuilder.success("이름이 " + updateUserName.getFirst_name() + " "
+                + updateUserName.getLast_name() + "로 업데이트 되었습니다."));
     }
 }

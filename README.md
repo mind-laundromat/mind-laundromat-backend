@@ -1,7 +1,7 @@
-## 🧠 Mind Laundromat - Backend
+# 🧠 Mind Laundromat - Backend
 심리치료 기반의 감정관리 앱 "마음 세탁소"의 백엔드 프로젝트입니다. Spring Boot 기반으로 구축되었으며, JWT 인증 및 RESTful API를 제공합니다.
 
-### 📁 프로젝트 구조
+## 📁 프로젝트 구조
 ```
 com.example.mind_laundromat
 │

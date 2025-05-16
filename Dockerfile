@@ -1,5 +1,5 @@
 # ✅ 1단계: 빌드 단계 (Gradle + JDK 21)
-FROM gradle:8.2.1-jdk21 AS build
+FROM gradle:8.5.0-jdk21 AS build
 WORKDIR /app
 COPY . .
 RUN gradle build --no-daemon
@@ -11,3 +11,4 @@ COPY --from=build /app/build/libs/mind-laundromat-backend-0.0.1-SNAPSHOT.jar app
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

@@ -67,7 +67,7 @@ com.example.mind_laundromat
 Google Cloud 서비스 계정 키 파일(JSON)을 발급받아 환경 변수에 등록합니다.
 
 ```
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-service-account.json
+GOOGLE_APPLICATION_CREDENTIALS=\path\to\your-service-account.json
 ```
 
 

@@ -66,14 +66,10 @@ com.example.mind_laundromat
 ### 1. 환경 변수 등록
 Google Cloud 서비스 계정 키 파일(JSON)을 발급받아 환경 변수에 등록합니다.
 
-```bash
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-service-account.json
+```
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-service-account.json
 ```
 
-Windows PowerShell에서는:
-```
-setx GOOGLE_APPLICATION_CREDENTIALS "C:\path\to\your-service-account.json"
-```
 
 ### 2.Spring Boot 설정 (application.yml / application.properties)
 

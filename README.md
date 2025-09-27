@@ -1,9 +1,18 @@
 # 🧠 Mind Laundromat - Backend
-CBT(인지행동치료) 기반 감정관리 앱 **"마음 세탁소"**의 백엔드 프로젝트입니다.  
+CBT(인지행동치료) 기반 감정관리 앱 Mind Laundromat(마음 세탁소)의 백엔드 프로젝트입니다.  
 Spring Boot 기반으로 구축되었으며, JWT 인증 및 RESTful API를 제공하여  
 **Gemini API 상담 챗봇, 감정 기록 관리, 인지 왜곡 분석** 기능을 지원합니다.
 
 > ⚠️ 본 앱은 의료 행위를 대체하지 않습니다. 위기 상황에서는 반드시 긴급 서비스를 이용하세요.
+
+<br>
+
+## 🖥 Development Environment
+- JDK 21 (Java Toolchain)
+- Spring Boot 3.4.4
+- Gradle 8.x
+- MySQL 8.x
+- IDE: IntelliJ IDEA / Eclipse (권장: IntelliJ)
 
 <br>
 

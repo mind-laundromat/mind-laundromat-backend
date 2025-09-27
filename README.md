@@ -45,7 +45,7 @@ com.example.mind_laundromat
 <br>
 
 ## ✨ 시스템 구성도
-<img width="3191" height="2248" alt="그림1" src="https://github.com/user-attachments/assets/48fd848a-8b82-42a9-9392-3f0a21db8aca" />
+<img width="3218" height="2278" alt="그림1" src="https://github.com/user-attachments/assets/f193da0f-7283-4592-8ecb-12203a6fdba2" />
 
 <br>
 

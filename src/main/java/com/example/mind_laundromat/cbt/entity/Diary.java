@@ -29,8 +29,10 @@ public class Diary extends BaseEntity {
     @JoinColumn(name = "emotion_id")
     private Emotion emotion;
 
+    @Column(columnDefinition = "TEXT")
     private String before_content; //교정 전
 
+    @Column(columnDefinition = "TEXT")
     private String after_content; //교정 후
 
     @OneToOne(fetch = FetchType.LAZY)

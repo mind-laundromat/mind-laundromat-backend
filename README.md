@@ -4,6 +4,9 @@ Spring Boot 기반으로 구축되었으며, JWT 인증 및 RESTful API를 제�
 **Gemini API 상담 챗봇, 감정 기록 관리, 인지 왜곡 분석** 기능을 지원합니다.
 
 > ⚠️ 본 앱은 의료 행위를 대체하지 않습니다. 위기 상황에서는 반드시 긴급 서비스를 이용하세요.
+
+<br>
+
 ## 📁 프로젝트 구조
 ```
 com.example.mind_laundromat
@@ -39,8 +42,12 @@ com.example.mind_laundromat
     ├── ResponseBuilder
     └── ResponseCode
 ```
+<br>
 
 ## ✨ 시스템 구성도
+<img width="3191" height="2248" alt="그림1" src="https://github.com/user-attachments/assets/48fd848a-8b82-42a9-9392-3f0a21db8aca" />
+
+<br>
 
 ## 🔗 Gemini API 연동 방법
 
@@ -73,6 +80,8 @@ spring.ai.vertex.ai.gemini.chat.options.temperature=0.5
 1. projectId와 location은 본인의 GCP 환경에 맞게 반드시 수정해야 합니다.
 2. 모델(gemini-2.0-flash-001)과 파라미터(temperature)는 필요에 따라 변경 가능합니다.
 3. 서비스 계정 키 파일은 절대 외부에 공개되지 않도록 주의하세요.
+
+<br>
 
 ## 📜 라이선스
 이 프로젝트는 [MIT License](./LICENSE)를 따릅니다.  

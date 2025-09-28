@@ -95,6 +95,18 @@ spring.ai.vertex.ai.gemini.chat.options.temperature=0.5
 
 <br>
 
+## 👥 Contributors
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/mainsprout"><img src="https://avatars.githubusercontent.com/u/143585656?s=400&u=c4fc8317d32cc54a7091f164a2667cbbc14fa482&v=4" width="100px;" alt=""/><br /><sub><b>mainsprout</b></sub></a><br />🌱</td>
+    <td align="center"><a href="https://github.com/hym7196"><img src="https://avatars.githubusercontent.com/u/64295988?v=4" width="100px;" alt=""/><br /><sub><b>hym7196</b></sub></a><br />🎨</td>
+    <td align="center"><a href="https://github.com/dusal1111"><img src="https://avatars.githubusercontent.com/u/147612119?v=4" width="100px;" alt=""/><br /><sub><b>dusal1111</b></sub></a><br />🎨</td>
+  </tr>
+</table>
+
+<br>
+
 ## 📜 라이선스
 이 프로젝트는 [MIT License](./LICENSE)를 따릅니다.  
 활용된 오픈소스 및 외부 서비스의 라이선스는 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)를 참고하세요.

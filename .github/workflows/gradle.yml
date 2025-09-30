@@ -18,17 +18,14 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
-
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
-
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: mind-laundromat-artifact # 아티팩트 이름을 여기서 고정
+        name: mind-laundromat-artifact
         path: build/libs/*.jar
 
   deploy:
@@ -39,13 +36,10 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: mind-laundromat-artifact # 위에서 고정한 이름 사용
+        name: mind-laundromat-artifact
 
     - name: Create GCP Key file
       run: echo "${{ secrets.GCP_KEY_JSON }}" > gcp-key.json
-
-    - name: Move GCP Key file to artifact folder
-      run: mv gcp-key.json ./mind-laundromat-artifact/
 
     - name: Deploy to EC2
       uses: appleboy/scp-action@master
@@ -53,7 +47,7 @@ jobs:
         host: ${{ secrets.AWS_HOST_IP }}
         username: ${{ secrets.AWS_HOST_USERNAME }}
         key: ${{ secrets.AWS_EC2_PEM_KEY }}
-        source: "./mind-laundromat-artifact/*"
+        source: "*.jar,gcp-key.json"
         target: "~/mind-laundromat"
 
     - name: Run application on EC2

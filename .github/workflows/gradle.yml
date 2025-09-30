@@ -21,7 +21,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
     - name: Build with Gradle Wrapper
-      run: ./gradlew bootJar -x test
+      run: ./gradlew clean bootJar -x test
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:

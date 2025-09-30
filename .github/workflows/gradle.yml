@@ -45,45 +45,31 @@ jobs:
         with:
           name: ${{ needs.build.outputs.artifact_name }}
   
-      - name: Deploy and Run on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_HOST_IP }}
-          username: ${{ secrets.AWS_HOST_USERNAME }}
-          key: ${{ secrets.AWS_EC2_PEM_KEY }}
-          script: |
-            # 배포 폴더 생성
-            mkdir -p ~/mind-laundromat
-            
-            # GCP 키 파일 생성
-            echo '${{ secrets.GCP_KEY_JSON }}' > ~/mind-laundromat/gcp-key.json
+      - name: Create GCP Key file
+        run: echo "${{ secrets.GCP_KEY_JSON }}" > gcp-key.json
   
-      - name: SCP JAR file to EC2
+      - name: Move GCP Key file to artifact folder
+        run: mv gcp-key.json ./${{ needs.build.outputs.artifact_name }}/
+  
+      - name: Deploy to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.AWS_HOST_IP }}
           username: ${{ secrets.AWS_HOST_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM_KEY }}
-          source: "*.jar" # 현재 폴더의 JAR 파일만 전송
+          source: "./${{ needs.build.outputs.artifact_name }}/*"
           target: "~/mind-laundromat"
-          
-      - name: Execute remote commands
+  
+      - name: Run application on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_HOST_IP }}
           username: ${{ secrets.AWS_HOST_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM_KEY }}
           script: |
-            # 배포 폴더로 이동
             cd ~/mind-laundromat
-            
-            # 기존 프로세스 종료
             pgrep java && pkill -9 java || echo "No java process to kill"
-
-            # JAR 파일 이름 찾기
             JAR_FILE=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
-
-            # 애플리케이션 실행
             nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
 
   dependency-submission:

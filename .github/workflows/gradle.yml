@@ -53,9 +53,12 @@ jobs:
         username: ${{ secrets.AWS_HOST_USERNAME }}
         key: ${{ secrets.AWS_EC2_PEM_KEY }}
         script: |
+          # 기존 프로세스 종료
           pgrep java && pkill -9 java || echo "No java process to kill"
-          JAR_FILE=$(find . -name "*.jar")
-          nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
+          # 다운로드된 jar 파일의 이름을 app.jar로 고정
+          mv *.jar app.jar
+          # 고정된 파일명으로 애플리케이션 실행
+          nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} app.jar &
 
   dependency-submission:
     runs-on: ubuntu-latest

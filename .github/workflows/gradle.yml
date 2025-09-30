@@ -65,9 +65,10 @@ jobs:
           username: ${{ secrets.AWS_HOST_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM_KEY }}
           script: |
+            # mind-laundromat 폴더로 이동
             cd ~/mind-laundromat
             pgrep java && pkill -9 java || echo "No java process to kill"
-            JAR_FILE=$(find . -name "*.jar")
+            JAR_FILE=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
             nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
 
   dependency-submission:

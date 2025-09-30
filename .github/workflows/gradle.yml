@@ -36,29 +36,32 @@ jobs:
         path: build/libs/*.jar
 
   deploy:
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ needs.build.outputs.artifact_name }}
-
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.AWS_HOST_IP }}
-        username: ${{ secrets.AWS_HOST_USERNAME }}
-        key: ${{ secrets.AWS_EC2_PEM_KEY }}
-        script: |
-          # 기존 프로세스 종료
-          pgrep java && pkill -9 java || echo "No java process to kill"
-          # 다운로드된 jar 파일의 이름을 app.jar로 고정
-          mv *.jar app.jar
-          # 고정된 파일명으로 애플리케이션 실행
-          nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} app.jar &
+      needs: build
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+  
+      - name: Create GCP Key file
+        run: echo "${{ secrets.GCP_KEY_JSON }}" > gcp-key.json
+        shell: bash
+  
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_HOST_IP }}
+          username: ${{ secrets.AWS_HOST_USERNAME }}
+          key: ${{ secrets.AWS_EC2_PEM_KEY }}
+          source: "*.jar,gcp-key.json" # jar파일과 gcp키 파일을 함께 전송
+          target: "~/mind-laundromat"  # 서버에 저장될 폴더 지정
+          script: |
+            cd ~/mind-laundromat
+            pgrep java && pkill -9 java || echo "No java process to kill"
+            JAR_FILE=$(find . -name "*.jar")
+            nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
 
   dependency-submission:
     runs-on: ubuntu-latest

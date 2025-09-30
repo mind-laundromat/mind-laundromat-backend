@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    outputs:
-      artifact_name: ${{ steps.upload.outputs.artifact-name }}
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -29,48 +26,47 @@ jobs:
       run: ./gradlew build -x test
 
     - name: Upload artifact
-      id: upload
       uses: actions/upload-artifact@v4
       with:
-        name: mind-laundromat-backend-artifact
+        name: mind-laundromat-artifact # 아티팩트 이름을 여기서 고정
         path: build/libs/*.jar
 
   deploy:
-      needs: build
-      runs-on: ubuntu-latest
-  
-      steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build.outputs.artifact_name }}
-  
-      - name: Create GCP Key file
-        run: echo "${{ secrets.GCP_KEY_JSON }}" > gcp-key.json
-  
-      - name: Move GCP Key file to artifact folder
-        run: mv gcp-key.json ./${{ needs.build.outputs.artifact_name }}/
-  
-      - name: Deploy to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.AWS_HOST_IP }}
-          username: ${{ secrets.AWS_HOST_USERNAME }}
-          key: ${{ secrets.AWS_EC2_PEM_KEY }}
-          source: "./${{ needs.build.outputs.artifact_name }}/*"
-          target: "~/mind-laundromat"
-  
-      - name: Run application on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_HOST_IP }}
-          username: ${{ secrets.AWS_HOST_USERNAME }}
-          key: ${{ secrets.AWS_EC2_PEM_KEY }}
-          script: |
-            cd ~/mind-laundromat
-            pgrep java && pkill -9 java || echo "No java process to kill"
-            JAR_FILE=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
-            nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: mind-laundromat-artifact # 위에서 고정한 이름 사용
+
+    - name: Create GCP Key file
+      run: echo "${{ secrets.GCP_KEY_JSON }}" > gcp-key.json
+
+    - name: Move GCP Key file to artifact folder
+      run: mv gcp-key.json ./mind-laundromat-artifact/
+
+    - name: Deploy to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.AWS_HOST_IP }}
+        username: ${{ secrets.AWS_HOST_USERNAME }}
+        key: ${{ secrets.AWS_EC2_PEM_KEY }}
+        source: "./mind-laundromat-artifact/*"
+        target: "~/mind-laundromat"
+
+    - name: Run application on EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AWS_HOST_IP }}
+        username: ${{ secrets.AWS_HOST_USERNAME }}
+        key: ${{ secrets.AWS_EC2_PEM_KEY }}
+        script: |
+          cd ~/mind-laundromat
+          pgrep java && pkill -9 java || echo "No java process to kill"
+          JAR_FILE=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
+          nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
 
   dependency-submission:
     runs-on: ubuntu-latest

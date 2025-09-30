@@ -26,7 +26,6 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
 
     - name: Build with Gradle Wrapper
-      # ❗ 테스트를 실행하지 않도록 -x test 옵션을 추가합니다.
       run: ./gradlew build -x test
 
     - name: Upload artifact
@@ -59,7 +58,6 @@ jobs:
           JAR_FILE=$(find . -name "*.jar")
           nohup java -jar ${{ secrets.DEPLOY_SCRIPT_ENV }} $JAR_FILE &
 
-  # dependency-submission 작업은 그대로 유지합니다.
   dependency-submission:
     runs-on: ubuntu-latest
     permissions:

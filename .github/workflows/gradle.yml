@@ -49,14 +49,21 @@ jobs:
         run: echo "${{ secrets.GCP_KEY_JSON }}" > gcp-key.json
         shell: bash
   
-      - name: Deploy to EC2
+      - name: SCP to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.AWS_HOST_IP }}
           username: ${{ secrets.AWS_HOST_USERNAME }}
           key: ${{ secrets.AWS_EC2_PEM_KEY }}
-          source: "*.jar,gcp-key.json" # jar파일과 gcp키 파일을 함께 전송
-          target: "~/mind-laundromat"  # 서버에 저장될 폴더 지정
+          source: "*.jar,gcp-key.json"
+          target: "~/mind-laundromat"
+  
+      - name: Run application on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST_IP }}
+          username: ${{ secrets.AWS_HOST_USERNAME }}
+          key: ${{ secrets.AWS_EC2_PEM_KEY }}
           script: |
             cd ~/mind-laundromat
             pgrep java && pkill -9 java || echo "No java process to kill"

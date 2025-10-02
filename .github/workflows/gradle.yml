@@ -25,7 +25,7 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew clean bootJar -x test
 
-    # --- 디버깅 단계 추가 ---
+    # --- 디버깅 단계 ---
     - name: Check build output
       run: ls -l build/libs/
 
@@ -33,7 +33,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: mind-laundromat-artifact
-        # --- 업로드 경로 수정 ---
         path: build/libs/*[!plain].jar
 
   deploy:
